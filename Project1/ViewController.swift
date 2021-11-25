@@ -1,7 +1,7 @@
 import UIKit
 
 class ViewController: UITableViewController {
-    var pictures = [String] ()
+    var pictures = [String]()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -19,8 +19,9 @@ class ViewController: UITableViewController {
                 pictures.append(item)
             }
         }
-        print(pictures)
+        print(pictures.sort())
     }
+    
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return pictures.count
     }
@@ -32,11 +33,18 @@ class ViewController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        if let vc = storyboard?.instantiateViewController(withIdentifier: "Detail") as? DetailViewController {
-            vc.selectedImage = pictures[indexPath.row]
-            
-            navigationController?.pushViewController(vc, animated: true)
+            // 1. Load the "Detail" View Controller and "typecast" it to be DetailViewController.
+        if let detailVC = storyboard?.instantiateViewController(withIdentifier: "Detail") as? DetailViewController {
+                // 2. If succeeded, set its selectedImage property.
+            detailVC.selectedImage = pictures[indexPath.row]
+                    // Set values to selectedPictureNumber and totalPictures:
+                    // "+1" to change the Swift's default index number.
+            detailVC.selectedPictureNumber = indexPath.row + 1
+                    // Total amount of "pictures" array.
+            detailVC.totalPictures = pictures.count
+
+                // 3. Push it onto the Navigation Controller.
+            navigationController?.pushViewController(detailVC, animated: true)
         }
     }
-    
 }
