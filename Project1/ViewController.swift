@@ -8,6 +8,8 @@ class ViewController: UITableViewController {
         
         title = "Storm Viewer"
         
+        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .action, target: self, action: #selector(recommendApp))
+        
         navigationController?.navigationBar.prefersLargeTitles = true
         
         let fm = FileManager.default
@@ -46,5 +48,13 @@ class ViewController: UITableViewController {
                 // 3. Push it onto the Navigation Controller.
             navigationController?.pushViewController(detailVC, animated: true)
         }
+    }
+    
+    @objc func recommendApp() {
+        let recommend = "Check out my first app!"
+        
+        let vc = UIActivityViewController(activityItems: [recommend], applicationActivities: [])
+        vc.popoverPresentationController?.barButtonItem = navigationItem.rightBarButtonItem
+        present(vc, animated: true)
     }
 }
