@@ -12,7 +12,7 @@ class ViewController: UITableViewController {
         
         navigationController?.navigationBar.prefersLargeTitles = true
         
-        let fm = FileManager.default
+        /* let fm = FileManager.default
         let path = Bundle.main.resourcePath!
         let items = try! fm.contentsOfDirectory(atPath: path)
         
@@ -21,7 +21,11 @@ class ViewController: UITableViewController {
                 pictures.append(item)
             }
         }
-        print(pictures.sort())
+        print(pictures.sort()) */
+        
+        performSelector(inBackground: #selector(loadImages), with: nil)
+        
+        tableView.reloadData()
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -48,6 +52,20 @@ class ViewController: UITableViewController {
                 // 3. Push it onto the Navigation Controller.
             navigationController?.pushViewController(detailVC, animated: true)
         }
+    }
+    
+    @objc func loadImages() {
+        let fm = FileManager.default
+        let path = Bundle.main.resourcePath!
+        let items = try! fm.contentsOfDirectory(atPath: path)
+        
+        for item in items {
+            if item.hasPrefix("nssl") {
+                pictures.append(item)
+            }
+        }
+        //print(pictures.sort())
+        pictures.sort()
     }
     
     @objc func recommendApp() {
