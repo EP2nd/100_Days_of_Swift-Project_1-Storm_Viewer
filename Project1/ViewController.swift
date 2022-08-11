@@ -1,31 +1,33 @@
 import UIKit
 
 class ViewController: UITableViewController {
+    
     var pictures = [String]()
+    var numberOfViews = [String: Int]()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         title = "Storm Viewer"
-        
         navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .action, target: self, action: #selector(recommendApp))
-        
         navigationController?.navigationBar.prefersLargeTitles = true
         
-        /* let fm = FileManager.default
-        let path = Bundle.main.resourcePath!
-        let items = try! fm.contentsOfDirectory(atPath: path)
+        let defaults = UserDefaults.standard
         
-        for item in items {
-            if item.hasPrefix("nssl") {
-                pictures.append(item)
+        if let savedData = defaults.object(forKey: "numberOfViews") as? Data, let savedPictures = defaults.object(forKey: "pictures") as? Data {
+            let jsonDecoder = JSONDecoder()
+            
+            do {
+                numberOfViews = try jsonDecoder.decode([String: Int].self, from: savedData)
+                pictures = try jsonDecoder.decode([String].self, from: savedPictures)
+            } catch {
+                print("Failed to load saved data.")
             }
+        } else {
+            performSelector(inBackground: #selector(loadImages), with: nil)
         }
-        print(pictures.sort()) */
-        
-        performSelector(inBackground: #selector(loadImages), with: nil)
-        
-        tableView.reloadData()
+        tableView.performSelector(onMainThread: #selector(UITableView.reloadData), with: nil, waitUntilDone: false)
+        //tableView.reloadData()
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -34,24 +36,25 @@ class ViewController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "Picture", for: indexPath)
-        cell.textLabel?.text = pictures[indexPath.row]
+        //cell.textLabel?.text = pictures[indexPath.row]
+        let picture = pictures[indexPath.row]
+        cell.textLabel?.text = picture
+        cell.detailTextLabel?.text = "Views: \(numberOfViews[picture]!)"
         return cell
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-            // 1. Load the "Detail" View Controller and "typecast" it to be DetailViewController.
         if let detailVC = storyboard?.instantiateViewController(withIdentifier: "Detail") as? DetailViewController {
-                // 2. If succeeded, set its selectedImage property.
             detailVC.selectedImage = pictures[indexPath.row]
-                    // Set values to selectedPictureNumber and totalPictures:
-                    // "+1" to change the Swift's default index number.
             detailVC.selectedPictureNumber = indexPath.row + 1
-                    // Total amount of "pictures" array.
             detailVC.totalPictures = pictures.count
-
-                // 3. Push it onto the Navigation Controller.
+            
             navigationController?.pushViewController(detailVC, animated: true)
         }
+        let picture = pictures[indexPath.row]
+        numberOfViews[picture]! += 1
+        save()
+        tableView.reloadData()
     }
     
     @objc func loadImages() {
@@ -61,10 +64,10 @@ class ViewController: UITableViewController {
         
         for item in items {
             if item.hasPrefix("nssl") {
+                numberOfViews[item] = 0
                 pictures.append(item)
             }
         }
-        //print(pictures.sort())
         pictures.sort()
     }
     
@@ -74,5 +77,16 @@ class ViewController: UITableViewController {
         let vc = UIActivityViewController(activityItems: [recommend], applicationActivities: [])
         vc.popoverPresentationController?.barButtonItem = navigationItem.rightBarButtonItem
         present(vc, animated: true)
+    }
+    
+    func save() {
+        let jsonEncoder = JSONEncoder()
+        if let savedData = try? jsonEncoder.encode(numberOfViews), let savedPictures = try? jsonEncoder.encode(pictures) {
+            let defaults = UserDefaults.standard
+            defaults.set(savedData, forKey: "numberOfViews")
+            defaults.set(savedPictures, forKey: "pictures")
+        } else {
+            print("Failed to save the number of views.")
+        }
     }
 }
