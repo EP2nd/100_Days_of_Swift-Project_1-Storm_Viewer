@@ -44,7 +44,7 @@ class ViewController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        if let detailVC = storyboard?.instantiateViewController(withIdentifier: "Detail") as? DetailViewController {
+        if let detailVC = storyboard?. dreViewController(withIdentifier: "Detail") as? DetailViewController {
             detailVC.selectedImage = pictures[indexPath.row]
             detailVC.selectedPictureNumber = indexPath.row + 1
             detailVC.totalPictures = pictures.count
