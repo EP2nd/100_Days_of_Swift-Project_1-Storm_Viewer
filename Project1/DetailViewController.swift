@@ -1,3 +1,10 @@
+//
+//  DetailViewController.swift
+//  Project1
+//
+//  Created by Edwin Przeźwiecki Jr. on 18/11/2021.
+//
+
 import UIKit
 
 class DetailViewController: UIViewController {
