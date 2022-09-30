@@ -17,6 +17,8 @@ class DetailViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        assert(selectedImage != nil, "It appears an image has not been selected!")
+        
         title = "Picture \(selectedPictureNumber) of \(totalPictures)"
         
         navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .action, target: self, action: #selector(shareTapped))
