@@ -8,17 +8,21 @@
 import UIKit
 
 class DetailViewController: UIViewController {
+    
     @IBOutlet var imageView: UIImageView!
     
     var selectedImage: String?
+    /// Challenge 3:
     var selectedPictureNumber = 0
     var totalPictures = 0
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        /// Project 18, challenge 2:
         assert(selectedImage != nil, "It appears an image has not been selected!")
         
+        /// Challenge 3:
         title = "Picture \(selectedPictureNumber) of \(totalPictures)"
         
         navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .action, target: self, action: #selector(shareTapped))
@@ -40,7 +44,7 @@ class DetailViewController: UIViewController {
         navigationController?.hidesBarsOnTap = false
     }
     
-    // Project 27, challenge 3:
+    /// Project 27, challenge 3:
     func watermarked(image: UIImage) -> UIImage {
         let renderer = UIGraphicsImageRenderer(size: image.size)
         
@@ -71,7 +75,7 @@ class DetailViewController: UIViewController {
             return
         }
             
-        // Project 27, challenge 3:
+        /// Project 27, challenge 3:
         let watermarkedImage = watermarked(image: image)
             
         let vc = UIActivityViewController(activityItems: [watermarkedImage, selectedImage!], applicationActivities: [])
